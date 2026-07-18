@@ -9,6 +9,7 @@ import com.example.dailroundsmarrowassessment1.QuizApplication
 import com.example.dailroundsmarrowassessment1.domain.Question
 import com.example.dailroundsmarrowassessment1.domain.QuestionRepository
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,7 +54,9 @@ class QuizViewModel(
     private fun loadQuestions() {
         _uiState.value = QuizUiState.Loading
         viewModelScope.launch {
-            repository.getQuestions().fold(
+            val request = async { repository.getQuestions() }
+            delay(MIN_SPLASH_MILLIS) // let the splash breathe on fast networks
+            request.await().fold(
                 onSuccess = {
                     questions = it
                     startQuiz()
@@ -144,6 +147,7 @@ class QuizViewModel(
     companion object {
         const val REVEAL_MILLIS = 2000L
         const val STREAK_MILESTONE = 3
+        const val MIN_SPLASH_MILLIS = 1600L
 
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
