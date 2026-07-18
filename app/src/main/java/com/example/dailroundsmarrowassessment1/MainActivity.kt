@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dailroundsmarrowassessment1.ui.quiz.ErrorScreen
 import com.example.dailroundsmarrowassessment1.ui.quiz.QuizAction
+import com.example.dailroundsmarrowassessment1.ui.quiz.QuizScreen
 import com.example.dailroundsmarrowassessment1.ui.quiz.QuizUiState
 import com.example.dailroundsmarrowassessment1.ui.quiz.QuizViewModel
 import com.example.dailroundsmarrowassessment1.ui.quiz.SplashScreen
@@ -53,11 +54,13 @@ private fun QuizRoot(viewModel: QuizViewModel = viewModel(factory = QuizViewMode
                 onRetry = { viewModel.onAction(QuizAction.Retry) },
             )
 
-            // placeholders until the quiz and results screens land
-            is QuizUiState.Playing -> Text(
-                text = "Question ${s.index + 1}/${s.total}",
-                modifier = Modifier.align(Alignment.Center),
+            is QuizUiState.Playing -> QuizScreen(
+                state = s,
+                effects = viewModel.effects,
+                onAction = viewModel::onAction,
             )
+
+            // placeholder until the results screen lands
 
             is QuizUiState.Results -> Text(
                 text = "Score ${s.correct}/${s.total}",
