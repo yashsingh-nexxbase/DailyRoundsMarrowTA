@@ -4,11 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -39,30 +39,31 @@ class MainActivity : ComponentActivity() {
 private fun QuizRoot(viewModel: QuizViewModel = viewModel(factory = QuizViewModel.Factory)) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .safeDrawingPadding(),
+    // Surface (not a plain Box) so content color defaults to onBackground
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
     ) {
-        when (val s = state) {
-            QuizUiState.Loading -> SplashScreen()
+        Box(modifier = Modifier.safeDrawingPadding()) {
+            when (val s = state) {
+                QuizUiState.Loading -> SplashScreen()
 
-            is QuizUiState.Error -> ErrorScreen(
-                message = s.message,
-                onRetry = { viewModel.onAction(QuizAction.Retry) },
-            )
+                is QuizUiState.Error -> ErrorScreen(
+                    message = s.message,
+                    onRetry = { viewModel.onAction(QuizAction.Retry) },
+                )
 
-            is QuizUiState.Playing -> QuizScreen(
-                state = s,
-                effects = viewModel.effects,
-                onAction = viewModel::onAction,
-            )
+                is QuizUiState.Playing -> QuizScreen(
+                    state = s,
+                    effects = viewModel.effects,
+                    onAction = viewModel::onAction,
+                )
 
-            is QuizUiState.Results -> ResultsScreen(
-                state = s,
-                onAction = viewModel::onAction,
-            )
+                is QuizUiState.Results -> ResultsScreen(
+                    state = s,
+                    onAction = viewModel::onAction,
+                )
+            }
         }
     }
 }
