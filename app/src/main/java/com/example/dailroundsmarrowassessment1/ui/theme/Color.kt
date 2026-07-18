@@ -2,10 +2,19 @@ package com.example.dailroundsmarrowassessment1.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val Night = Color(0xFF0E1120)
+val Surface1 = Color(0xFF171B30)
+val Surface2 = Color(0xFF1E2340)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val Violet = Color(0xFF7C5CFF)
+val SkyBlue = Color(0xFF4DA8FF)
+
+val Correct = Color(0xFF2BD97C)
+val Wrong = Color(0xFFFF5C7A)
+
+// reserved for the streak badge only
+val Ember = Color(0xFFFF9F45)
+val EmberDeep = Color(0xFFFF5C3D)
+
+val TextBright = Color(0xFFEEF0FA)
+val TextDim = Color(0xFF8B91B3)
