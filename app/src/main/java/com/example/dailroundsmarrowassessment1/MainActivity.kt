@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -21,6 +19,7 @@ import com.example.dailroundsmarrowassessment1.ui.quiz.QuizAction
 import com.example.dailroundsmarrowassessment1.ui.quiz.QuizScreen
 import com.example.dailroundsmarrowassessment1.ui.quiz.QuizUiState
 import com.example.dailroundsmarrowassessment1.ui.quiz.QuizViewModel
+import com.example.dailroundsmarrowassessment1.ui.quiz.ResultsScreen
 import com.example.dailroundsmarrowassessment1.ui.quiz.SplashScreen
 import com.example.dailroundsmarrowassessment1.ui.theme.QuizTheme
 
@@ -60,11 +59,9 @@ private fun QuizRoot(viewModel: QuizViewModel = viewModel(factory = QuizViewMode
                 onAction = viewModel::onAction,
             )
 
-            // placeholder until the results screen lands
-
-            is QuizUiState.Results -> Text(
-                text = "Score ${s.correct}/${s.total}",
-                modifier = Modifier.align(Alignment.Center),
+            is QuizUiState.Results -> ResultsScreen(
+                state = s,
+                onAction = viewModel::onAction,
             )
         }
     }
