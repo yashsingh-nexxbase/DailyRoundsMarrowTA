@@ -1,16 +1,21 @@
 package com.example.dailroundsmarrowassessment1.di
 
+import android.content.Context
+import androidx.room.Room
 import com.example.dailroundsmarrowassessment1.data.ModuleRepositoryImpl
+import com.example.dailroundsmarrowassessment1.data.ProgressRepositoryImpl
 import com.example.dailroundsmarrowassessment1.data.QuestionRepositoryImpl
+import com.example.dailroundsmarrowassessment1.data.local.AppDatabase
 import com.example.dailroundsmarrowassessment1.data.remote.QuizApi
 import com.example.dailroundsmarrowassessment1.domain.ModuleRepository
+import com.example.dailroundsmarrowassessment1.domain.ProgressRepository
 import com.example.dailroundsmarrowassessment1.domain.QuestionRepository
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
-class AppContainer {
+class AppContainer(context: Context) {
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -20,7 +25,16 @@ class AppContainer {
         .build()
         .create(QuizApi::class.java)
 
+    private val database: AppDatabase = Room.databaseBuilder(
+        context.applicationContext,
+        AppDatabase::class.java,
+        "pulsequiz.db",
+    ).build()
+
     val questionRepository: QuestionRepository = QuestionRepositoryImpl(api)
 
     val moduleRepository: ModuleRepository = ModuleRepositoryImpl(api)
+
+    val progressRepository: ProgressRepository =
+        ProgressRepositoryImpl(database.moduleProgressDao())
 }
