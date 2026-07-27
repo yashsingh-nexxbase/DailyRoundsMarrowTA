@@ -1,7 +1,9 @@
 package com.example.dailroundsmarrowassessment1.di
 
+import com.example.dailroundsmarrowassessment1.data.ModuleRepositoryImpl
 import com.example.dailroundsmarrowassessment1.data.QuestionRepositoryImpl
 import com.example.dailroundsmarrowassessment1.data.remote.QuizApi
+import com.example.dailroundsmarrowassessment1.domain.ModuleRepository
 import com.example.dailroundsmarrowassessment1.domain.QuestionRepository
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -19,4 +21,6 @@ class AppContainer {
         .create(QuizApi::class.java)
 
     val questionRepository: QuestionRepository = QuestionRepositoryImpl(api)
+
+    val moduleRepository: ModuleRepository = ModuleRepositoryImpl(api)
 }
