@@ -8,6 +8,7 @@ import com.example.dailroundsmarrowassessment1.data.local.AppDatabase
 import com.example.dailroundsmarrowassessment1.data.remote.QuizApi
 import com.example.dailroundsmarrowassessment1.domain.ModuleRepository
 import com.example.dailroundsmarrowassessment1.domain.ProgressRepository
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
@@ -15,7 +16,12 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 class AppContainer(context: Context) {
 
-    private val json = Json { ignoreUnknownKeys = true }
+    @OptIn(ExperimentalSerializationApi::class)
+    private val json = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+        allowTrailingComma = true
+    }
 
     private val api: QuizApi = Retrofit.Builder()
         .baseUrl(QuizApi.BASE_URL)
@@ -27,9 +33,12 @@ class AppContainer(context: Context) {
         context.applicationContext,
         AppDatabase::class.java,
         "pulsequiz.db",
-    ).build()
+    )
+        .fallbackToDestructiveMigration(dropAllTables = true)
+        .build()
 
-    val moduleRepository: ModuleRepository = ModuleRepositoryImpl(api)
+    val moduleRepository: ModuleRepository =
+        ModuleRepositoryImpl(api, database.moduleDao(), database.questionDao())
 
     val progressRepository: ProgressRepository =
         ProgressRepositoryImpl(database.moduleProgressDao())

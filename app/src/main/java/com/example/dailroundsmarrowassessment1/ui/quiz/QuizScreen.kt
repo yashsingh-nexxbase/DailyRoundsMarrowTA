@@ -98,7 +98,7 @@ fun QuizScreen(
         }
     }
 
-    Box(modifier = modifier.fillMaxWidth().height(600.dp)) {
+    Box(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
