@@ -33,7 +33,8 @@ import com.example.dailroundsmarrowassessment1.ui.theme.Violet
 @Composable
 fun ModuleListScreen(
     state: ModuleListUiState,
-    onModuleClick: (Module) -> Unit,
+    onStart: (Module) -> Unit,
+    onReview: (Module) -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -49,7 +50,8 @@ fun ModuleListScreen(
 
         is ModuleListUiState.Ready -> ModuleList(
             items = state.items,
-            onModuleClick = onModuleClick,
+            onStart = onStart,
+            onReview = onReview,
             modifier = modifier,
         )
     }
@@ -73,7 +75,8 @@ private fun LoadingState(modifier: Modifier = Modifier) {
 @Composable
 private fun ModuleList(
     items: List<ModuleListItem>,
-    onModuleClick: (Module) -> Unit,
+    onStart: (Module) -> Unit,
+    onReview: (Module) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -85,7 +88,15 @@ private fun ModuleList(
     ) {
         item { Header() }
         items(items = items, key = { it.module.id }) { item ->
-            ModuleCard(item = item, onClick = { onModuleClick(item.module) })
+            ModuleCard(
+                item = item,
+                onClick = {
+                    when (item.status) {
+                        ModuleStatus.NotStarted -> onStart(item.module)
+                        ModuleStatus.Completed -> onReview(item.module)
+                    }
+                },
+            )
         }
     }
 }

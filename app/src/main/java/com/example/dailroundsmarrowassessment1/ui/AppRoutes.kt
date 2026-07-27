@@ -7,3 +7,6 @@ object ModuleListRoute
 
 @Serializable
 data class QuizRoute(val moduleId: String, val questionsUrl: String)
+
+@Serializable
+data class ReviewRoute(val moduleId: String, val questionsUrl: String)
