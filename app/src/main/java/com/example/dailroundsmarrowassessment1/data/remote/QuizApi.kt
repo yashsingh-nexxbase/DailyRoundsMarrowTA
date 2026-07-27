@@ -5,9 +5,6 @@ import retrofit2.http.Url
 
 interface QuizApi {
 
-    @GET("raw")
-    suspend fun fetchQuestions(): List<QuestionDto>
-
     @GET
     suspend fun fetchModules(@Url url: String): List<ModuleDto>
 
@@ -15,8 +12,7 @@ interface QuizApi {
     suspend fun fetchModuleQuestions(@Url url: String): List<QuestionDto>
 
     companion object {
-        const val BASE_URL =
-            "https://gist.githubusercontent.com/dr-samrat/53846277a8fcb034e482906ccc0d12b2/"
+        const val BASE_URL = "https://gist.githubusercontent.com/"
 
         const val MODULES_URL =
             "https://gist.github.com/dr-samrat/ee986f16da9d8303c1acfd364ece22c5/raw"

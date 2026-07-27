@@ -36,7 +36,9 @@ fun PulseQuizApp() {
                     val state by viewModel.uiState.collectAsStateWithLifecycle()
                     ModuleListScreen(
                         state = state,
-                        onModuleClick = { module -> navController.navigate(QuizRoute(module.id)) },
+                        onModuleClick = { module ->
+                            navController.navigate(QuizRoute(module.id, module.questionsUrl))
+                        },
                         onRetry = viewModel::load,
                     )
                 }

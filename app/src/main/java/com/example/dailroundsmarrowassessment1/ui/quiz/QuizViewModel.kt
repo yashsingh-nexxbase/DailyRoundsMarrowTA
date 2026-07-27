@@ -2,12 +2,15 @@ package com.example.dailroundsmarrowassessment1.ui.quiz
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.toRoute
 import com.example.dailroundsmarrowassessment1.QuizApplication
+import com.example.dailroundsmarrowassessment1.domain.ModuleRepository
 import com.example.dailroundsmarrowassessment1.domain.Question
-import com.example.dailroundsmarrowassessment1.domain.QuestionRepository
+import com.example.dailroundsmarrowassessment1.ui.QuizRoute
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
@@ -19,7 +22,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class QuizViewModel(
-    private val repository: QuestionRepository,
+    private val moduleRepository: ModuleRepository,
+    private val questionsUrl: String,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<QuizUiState>(QuizUiState.Loading)
@@ -54,7 +58,7 @@ class QuizViewModel(
     private fun loadQuestions() {
         _uiState.value = QuizUiState.Loading
         viewModelScope.launch {
-            val request = async { repository.getQuestions() }
+            val request = async { moduleRepository.getQuestions(questionsUrl) }
             delay(MIN_SPLASH_MILLIS) // let the splash breathe on fast networks
             request.await().fold(
                 onSuccess = {
@@ -153,7 +157,11 @@ class QuizViewModel(
             initializer {
                 val app = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]
                         as QuizApplication
-                QuizViewModel(app.container.questionRepository)
+                val route = createSavedStateHandle().toRoute<QuizRoute>()
+                QuizViewModel(
+                    moduleRepository = app.container.moduleRepository,
+                    questionsUrl = route.questionsUrl,
+                )
             }
         }
     }

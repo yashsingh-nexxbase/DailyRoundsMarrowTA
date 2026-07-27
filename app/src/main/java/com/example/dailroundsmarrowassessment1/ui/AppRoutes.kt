@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 object ModuleListRoute
 
 @Serializable
-data class QuizRoute(val moduleId: String)
+data class QuizRoute(val moduleId: String, val questionsUrl: String)

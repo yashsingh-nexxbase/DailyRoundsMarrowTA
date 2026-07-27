@@ -4,12 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import com.example.dailroundsmarrowassessment1.data.ModuleRepositoryImpl
 import com.example.dailroundsmarrowassessment1.data.ProgressRepositoryImpl
-import com.example.dailroundsmarrowassessment1.data.QuestionRepositoryImpl
 import com.example.dailroundsmarrowassessment1.data.local.AppDatabase
 import com.example.dailroundsmarrowassessment1.data.remote.QuizApi
 import com.example.dailroundsmarrowassessment1.domain.ModuleRepository
 import com.example.dailroundsmarrowassessment1.domain.ProgressRepository
-import com.example.dailroundsmarrowassessment1.domain.QuestionRepository
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
@@ -30,8 +28,6 @@ class AppContainer(context: Context) {
         AppDatabase::class.java,
         "pulsequiz.db",
     ).build()
-
-    val questionRepository: QuestionRepository = QuestionRepositoryImpl(api)
 
     val moduleRepository: ModuleRepository = ModuleRepositoryImpl(api)
 
