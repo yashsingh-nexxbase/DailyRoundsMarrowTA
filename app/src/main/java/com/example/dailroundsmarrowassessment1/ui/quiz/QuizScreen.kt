@@ -16,13 +16,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -94,7 +98,7 @@ fun QuizScreen(
         }
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxWidth().height(600.dp)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -113,26 +117,35 @@ fun QuizScreen(
                 StreakBadge(streak = state.streak)
             }
 
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center,
-            ) {
-                AnimatedContent(
-                    targetState = state,
-                    contentKey = { it.index },
-                    transitionSpec = {
-                        (slideInHorizontally { it / 3 } + fadeIn(tween(250)))
-                            .togetherWith(slideOutHorizontally { -it / 3 } + fadeOut(tween(200)))
-                    },
-                    label = "questionCard",
-                ) { playing ->
-                    QuestionCard(
-                        question = playing.question,
-                        index = playing.index,
-                        reveal = playing.reveal,
-                        locked = playing.isLocked,
-                        onAction = onAction,
-                    )
+            // Scrollable content region: the card is vertically centered when it
+            // fits (portrait), and becomes scrollable when it can't (landscape /
+            // short devices) so the question and every option stay reachable.
+            BoxWithConstraints(modifier = Modifier.weight(1f)) {
+                val scrollState = rememberScrollState()
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(scrollState)
+                        .heightIn(min = maxHeight),
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    AnimatedContent(
+                        targetState = state,
+                        contentKey = { it.index },
+                        transitionSpec = {
+                            (slideInHorizontally { it / 3 } + fadeIn(tween(250)))
+                                .togetherWith(slideOutHorizontally { -it / 3 } + fadeOut(tween(200)))
+                        },
+                        label = "questionCard",
+                    ) { playing ->
+                        QuestionCard(
+                            question = playing.question,
+                            index = playing.index,
+                            reveal = playing.reveal,
+                            locked = playing.isLocked,
+                            onAction = onAction,
+                        )
+                    }
                 }
             }
 
