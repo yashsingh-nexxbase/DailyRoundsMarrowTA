@@ -43,7 +43,7 @@ fun PulseQuizApp() {
                     )
                 }
                 composable<QuizRoute> {
-                    QuizFlow()
+                    QuizFlow(onExit = { navController.popBackStack() })
                 }
             }
         }

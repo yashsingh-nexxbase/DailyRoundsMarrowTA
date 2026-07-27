@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,6 +46,7 @@ import com.example.dailroundsmarrowassessment1.ui.theme.Wrong
 fun ResultsScreen(
     state: QuizUiState.Results,
     onAction: (QuizAction) -> Unit,
+    onFinish: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var statsVisible by remember { mutableStateOf(false) }
@@ -97,12 +99,22 @@ fun ResultsScreen(
             }
 
             Button(
-                onClick = { onAction(QuizAction.Restart) },
+                onClick = onFinish,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Violet),
+            ) {
+                Text("Finish", style = MaterialTheme.typography.labelLarge)
+            }
+            Spacer(Modifier.height(10.dp))
+            OutlinedButton(
+                onClick = { onAction(QuizAction.Restart) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(14.dp),
             ) {
                 Text("Restart Quiz", style = MaterialTheme.typography.labelLarge)
             }

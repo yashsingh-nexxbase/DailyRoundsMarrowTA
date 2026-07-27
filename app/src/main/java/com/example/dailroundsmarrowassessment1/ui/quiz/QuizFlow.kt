@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun QuizFlow(
+    onExit: () -> Unit,
     viewModel: QuizViewModel = viewModel(factory = QuizViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -28,6 +29,7 @@ fun QuizFlow(
         is QuizUiState.Results -> ResultsScreen(
             state = s,
             onAction = viewModel::onAction,
+            onFinish = onExit,
         )
     }
 }

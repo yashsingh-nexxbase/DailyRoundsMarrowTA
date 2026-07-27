@@ -8,7 +8,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.toRoute
 import com.example.dailroundsmarrowassessment1.QuizApplication
+import com.example.dailroundsmarrowassessment1.domain.ModuleProgress
 import com.example.dailroundsmarrowassessment1.domain.ModuleRepository
+import com.example.dailroundsmarrowassessment1.domain.ProgressRepository
 import com.example.dailroundsmarrowassessment1.domain.Question
 import com.example.dailroundsmarrowassessment1.ui.QuizRoute
 import kotlinx.coroutines.Job
@@ -23,6 +25,8 @@ import kotlinx.coroutines.launch
 
 class QuizViewModel(
     private val moduleRepository: ModuleRepository,
+    private val progressRepository: ProgressRepository,
+    private val moduleId: String,
     private val questionsUrl: String,
 ) : ViewModel() {
 
@@ -39,6 +43,7 @@ class QuizViewModel(
     private var skipped = 0
     private var streak = 0
     private var longestStreak = 0
+    private val answers = mutableListOf<Int>()
 
     private var advanceJob: Job? = null
 
@@ -80,6 +85,7 @@ class QuizViewModel(
         skipped = 0
         streak = 0
         longestStreak = 0
+        answers.clear()
         _uiState.value = playingState()
     }
 
@@ -98,6 +104,7 @@ class QuizViewModel(
             if (streak > 0) sendEffect(QuizEffect.StreakLost)
             streak = 0
         }
+        answers.add(selected)
 
         _uiState.value = current.copy(
             streak = streak,
@@ -114,6 +121,7 @@ class QuizViewModel(
         val current = _uiState.value as? QuizUiState.Playing ?: return
         if (current.isLocked) return
         skipped++
+        answers.add(SKIPPED)
         advance()
     }
 
@@ -122,6 +130,7 @@ class QuizViewModel(
         _uiState.value = if (index < questions.size) {
             playingState()
         } else {
+            saveProgress()
             QuizUiState.Results(
                 correct = correct,
                 wrong = wrong,
@@ -129,6 +138,19 @@ class QuizViewModel(
                 total = questions.size,
                 longestStreak = longestStreak,
             )
+        }
+    }
+
+    private fun saveProgress() {
+        val progress = ModuleProgress(
+            moduleId = moduleId,
+            correct = correct,
+            total = questions.size,
+            completed = true,
+            answers = answers.toList(),
+        )
+        viewModelScope.launch {
+            progressRepository.saveProgress(progress)
         }
     }
 
@@ -152,6 +174,7 @@ class QuizViewModel(
         const val REVEAL_MILLIS = 2000L
         const val STREAK_MILESTONE = 3
         const val MIN_SPLASH_MILLIS = 1600L
+        const val SKIPPED = -1
 
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -160,6 +183,8 @@ class QuizViewModel(
                 val route = createSavedStateHandle().toRoute<QuizRoute>()
                 QuizViewModel(
                     moduleRepository = app.container.moduleRepository,
+                    progressRepository = app.container.progressRepository,
+                    moduleId = route.moduleId,
                     questionsUrl = route.questionsUrl,
                 )
             }
