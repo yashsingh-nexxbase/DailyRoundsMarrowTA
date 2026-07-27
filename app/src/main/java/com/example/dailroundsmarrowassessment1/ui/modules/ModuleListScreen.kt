@@ -44,6 +44,7 @@ fun ModuleListScreen(
             message = state.message,
             onRetry = onRetry,
             modifier = modifier,
+            title = "Couldn't load modules",
         )
 
         is ModuleListUiState.Ready -> ModuleList(

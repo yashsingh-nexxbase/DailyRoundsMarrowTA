@@ -18,6 +18,7 @@ fun ErrorScreen(
     message: String,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    title: String = "Couldn't load questions",
 ) {
     Column(
         modifier = modifier
@@ -27,7 +28,7 @@ fun ErrorScreen(
         verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
     ) {
         Text(
-            text = "Couldn't load questions",
+            text = title,
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
         )
